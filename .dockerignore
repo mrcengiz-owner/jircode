@@ -1,0 +1,17 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+.env
+db.sqlite3
+staticfiles
+media
+*.md
+.Python
+.DS_Store
+src
+index.html
+.pytest_cache
+.mypy_cache
+agent-transcripts

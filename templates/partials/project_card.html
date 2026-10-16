@@ -1,0 +1,31 @@
+<article class="project-card">
+  <a href="{{ project.get_absolute_url }}" class="project-card-link">
+    <div class="project-cover project-cover-{{ project.slug }}">
+      {% if project.cover %}
+        <img src="{{ project.cover.url }}" alt="{{ project.title }}">
+      {% else %}
+        {% include "partials/product_visual.html" %}
+      {% endif %}
+    </div>
+    <div class="project-body">
+      <span class="chip">
+        {% if project.slug == "jircode-mail" %}E-posta
+        {% elif project.slug == "jircode-chat" %}Mesajlaşma
+        {% elif project.slug == "acik-masa" %}Dijital Menü
+        {% else %}Ürün{% endif %}
+      </span>
+      <h3>{{ project.title }}</h3>
+      <p>{{ project.summary }}</p>
+      {% if project.tech_list %}
+      <ul class="tech-list">
+        {% for tech in project.tech_list %}
+        <li>{{ tech }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if project.project_url %}
+      <span class="project-url">{{ project.project_url|cut:"https://"|cut:"http://" }} →</span>
+      {% endif %}
+    </div>
+  </a>
+</article>

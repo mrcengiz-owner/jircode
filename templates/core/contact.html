@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}İletişim | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}JîrCode ile iletişime geçin — demo, kurulum ve iş birliği talepleri.{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">İletişim</p>
+    <h1>Demo, kurulum veya iş birliği</h1>
+    <p class="lede">JîrCode Mail, JîrChat veya Açık Masa için talebinizi iletin. En kısa sürede dönüş yapalım.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container contact-grid">
+    <form class="contact-form" method="post" novalidate>
+      {% csrf_token %}
+      <label>
+        <span>Ad Soyad</span>
+        {{ form.name }}
+        {{ form.name.errors }}
+      </label>
+      <label>
+        <span>E-posta</span>
+        {{ form.email }}
+        {{ form.email.errors }}
+      </label>
+      <label>
+        <span>Konu</span>
+        {{ form.subject }}
+        {{ form.subject.errors }}
+      </label>
+      <label>
+        <span>Mesaj</span>
+        {{ form.message }}
+        {{ form.message.errors }}
+      </label>
+      <button class="btn btn-primary" type="submit">Mesajı gönder</button>
+    </form>
+
+    <aside class="contact-aside">
+      <h2>Doğrudan iletişim</h2>
+      <p><a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a></p>
+      <p>{{ SITE_LOCATION }}</p>
+      <div class="meta-box">
+        <p>Yanıt süremiz genellikle 1–2 iş günüdür.</p>
+        <p><a href="https://mail.jircode.com" target="_blank" rel="noopener">mail.jircode.com</a></p>
+        <p><a href="https://chat.jircode.com" target="_blank" rel="noopener">chat.jircode.com</a></p>
+        <p><a href="https://acikmasa.net" target="_blank" rel="noopener">acikmasa.net</a></p>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

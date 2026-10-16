@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Ürünler | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}JîrCode ürünleri — JîrCode Mail, JîrChat ve Açık Masa.{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Ürünler</p>
+    <h1>JîrCode ürün ailesi</h1>
+    <p class="lede">Kurumsal e-posta, anlık mesajlaşma ve dijital menü çözümleri.</p>
+    <form class="search-bar" method="get" action="{% url 'projects' %}">
+      <input type="search" name="q" value="{{ q }}" placeholder="Ürün ara: mail, chat, menü…">
+      <button class="btn btn-primary" type="submit">Ara</button>
+    </form>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {% if projects %}
+    <div class="project-grid">
+      {% for project in projects %}
+        {% include "partials/project_card.html" %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <h2>{% if q %}Sonuç bulunamadı{% else %}Henüz yayınlanmış ürün yok{% endif %}</h2>
+      <p>{% if q %}Farklı bir anahtar kelime deneyin.{% else %}Yakında yeni ürünler eklenecek.{% endif %}</p>
+      {% if q %}<a class="btn btn-ghost" href="{% url 'projects' %}">Filtreyi temizle</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% if project.slug == "jircode-mail" %}
+<div class="product-visual product-visual-mail" aria-hidden="true">
+  <div class="pv-window">
+    <div class="pv-bar"><span></span><span></span><span></span><em>JîrCode MAIL</em></div>
+    <div class="pv-mail">
+      <aside>
+        <b>Gelen Kutusu</b>
+        <i>Gönderilmiş</i>
+        <i>Taslaklar</i>
+      </aside>
+      <main>
+        <strong>Hoş geldin</strong>
+        <p>Privacy-first self-hosted mail</p>
+        <div class="pv-field">e-posta@sirketiniz.com</div>
+        <div class="pv-btn">Giriş Yap</div>
+      </main>
+    </div>
+  </div>
+</div>
+{% elif project.slug == "jircode-chat" %}
+<div class="product-visual product-visual-chat" aria-hidden="true">
+  <div class="pv-window">
+    <div class="pv-bar"><span></span><span></span><span></span><em># genel</em></div>
+    <div class="pv-chat">
+      <div class="pv-msg">
+        <b>Ayşe Demir</b>
+        <p>Haftalık durum özeti #operasyon kanalına taşındı.</p>
+      </div>
+      <div class="pv-msg">
+        <b>Mehmet Kaya</b>
+        <p>Politika PDF’ini yükledim — inceleme için etiketledim.</p>
+      </div>
+      <div class="pv-msg you">
+        <b>Siz</b>
+        <p>Onaylandı. 14:00 aramasında netleştirelim.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% elif project.slug == "acik-masa" %}
+<div class="product-visual product-visual-masa" aria-hidden="true">
+  <div class="pv-phone">
+    <div class="pv-notch"></div>
+    <div class="pv-menu">
+      <strong>Menü</strong>
+      <div class="pv-item"><span>Latte</span><em>95 ₺ · 150 kcal</em></div>
+      <div class="pv-item"><span>Cappuccino</span><em>90 ₺ · 120 kcal</em></div>
+      <div class="pv-item"><span>Cheesecake</span><em>140 ₺ · 420 kcal</em></div>
+      <div class="pv-qr">QR ile aç</div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="product-visual product-visual-default" aria-hidden="true">
+  <strong>{{ project.title }}</strong>
+  {% if project.project_url %}
+  <span>{{ project.project_url|cut:"https://"|cut:"http://" }}</span>
+  {% endif %}
+</div>
+{% endif %}

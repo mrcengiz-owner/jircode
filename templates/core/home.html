@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ SITE_NAME }} | Kurumsal Yazılım Ürünleri{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <p class="eyebrow">Software Technologies</p>
+    <h1>
+      <span class="brand-hero">Jîr<span>Code</span></span>
+      <span class="hero-line">Kurumsal iletişim ve işletme yazılımı ürünleri.</span>
+    </h1>
+    <p class="lede">
+      Self-hosted e-posta, kurumsal mesajlaşma ve restoranlar için dijital menü —
+      canlıda çalışan ürünlerle işletmelerin günlük işini kolaylaştırıyoruz.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="{% url 'projects' %}">Ürünlerimizi inceleyin</a>
+      <a class="btn btn-ghost" href="{% url 'contact' %}">Bizimle iletişime geçin</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Ürün hattımız</h2>
+        <p>Her ürün net bir iş problemine odaklanır.</p>
+      </div>
+    </div>
+    <div class="feature-list">
+      <article>
+        <h3>JîrCode Mail</h3>
+        <p>Gizlilik odaklı, kendi sunucunuzda kurumsal e-posta altyapısı.</p>
+      </article>
+      <article>
+        <h3>JîrChat</h3>
+        <p>Kanallar, dosyalar ve aramalarla self-hosted kurumsal mesajlaşma.</p>
+      </article>
+      <article>
+        <h3>Açık Masa</h3>
+        <p>Restoran ve kafeler için QR’lı, görsel dijital menü platformu.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+{% if featured_projects or latest_projects %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Canlı ürünler</h2>
+        <p>Hemen inceleyebileceğiniz JîrCode ürünleri.</p>
+      </div>
+      <a class="text-link" href="{% url 'projects' %}">Tümünü gör</a>
+    </div>
+    <div class="project-grid">
+      {% for project in featured_projects %}
+        {% include "partials/project_card.html" %}
+      {% empty %}
+        {% for project in latest_projects %}
+          {% include "partials/project_card.html" %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container cta-band">
+    <div>
+      <h2>Demo, kurulum veya iş birliği</h2>
+      <p>Mail, Chat veya Açık Masa için demo ve on-premise kurulum taleplerinizi iletin.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'contact' %}">İletişime geç</a>
+  </div>
+</section>
+{% endblock %}

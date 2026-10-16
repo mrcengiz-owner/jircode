@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Hizmetler | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}JîrCode hizmetleri — self-hosted iletişim ürünleri, dijital menü ve kurumsal yazılım.{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Hizmetler</p>
+    <h1>Ürünlerimiz etrafında uçtan uca destek</h1>
+    <p class="lede">Kurulumdan bakıma kadar JîrCode Mail, JîrChat ve Açık Masa için yanınızdayız.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container service-list">
+    <article class="service-item">
+      <span>01</span>
+      <div>
+        <h2>Self-hosted iletişim altyapısı</h2>
+        <p>JîrCode Mail ve JîrChat için on-premise / private cloud kurulum ve yapılandırma.</p>
+      </div>
+    </article>
+    <article class="service-item">
+      <span>02</span>
+      <div>
+        <h2>İşletme odaklı dijital ürünler</h2>
+        <p>Açık Masa gibi QR menü ve operasyonel web platformlarının kurulumu ile markaya özel uyarlama.</p>
+      </div>
+    </article>
+    <article class="service-item">
+      <span>03</span>
+      <div>
+        <h2>Kurumsal yazılım geliştirme</h2>
+        <p>Mevcut ürünlerinize entegrasyon, özel paneller ve API tabanlı genişletmeler.</p>
+      </div>
+    </article>
+    <article class="service-item">
+      <span>04</span>
+      <div>
+        <h2>Destek ve bakım</h2>
+        <p>Yayın sonrası izleme, güvenlik güncellemeleri ve sürekli iyileştirme.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container cta-band">
+    <div>
+      <h2>Hangi ürün size uyuyor?</h2>
+      <p>Kısa bir brieften sonra demo, kurulum planı veya uygun paket önerisini paylaşırız.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'contact' %}">Görüşme talep et</a>
+  </div>
+</section>
+{% endblock %}

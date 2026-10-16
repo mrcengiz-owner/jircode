@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ project.summary }}{% endblock %}
+
+{% block content %}
+<article class="section">
+  <div class="container detail-layout">
+    <header class="detail-head">
+      <a class="text-link" href="{% url 'projects' %}">← Ürünler</a>
+      <p class="eyebrow">
+        {% if project.slug == "jircode-mail" %}Kurumsal e-posta
+        {% elif project.slug == "jircode-chat" %}Kurumsal mesajlaşma
+        {% elif project.slug == "acik-masa" %}Restoran teknolojisi
+        {% else %}Ürün{% endif %}
+      </p>
+      <h1>{{ project.title }}</h1>
+      <p class="lede">{{ project.summary }}</p>
+      {% if project.tech_list %}
+      <ul class="tech-list">
+        {% for tech in project.tech_list %}
+        <li>{{ tech }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <div class="hero-actions">
+        {% if project.project_url %}
+        <a class="btn btn-primary" href="{{ project.project_url }}" target="_blank" rel="noopener">Ürünü ziyaret et</a>
+        {% endif %}
+        <a class="btn btn-ghost" href="{% url 'contact' %}">Demo / destek iste</a>
+      </div>
+    </header>
+
+    <figure class="detail-cover detail-cover-{{ project.slug }}">
+      {% if project.cover %}
+        <img src="{{ project.cover.url }}" alt="{{ project.title }}">
+      {% else %}
+        {% include "partials/product_visual.html" %}
+      {% endif %}
+    </figure>
+
+    <div class="detail-highlights">
+      {% if project.slug == "jircode-mail" %}
+        <div><strong>Self-hosted</strong><span>Altyapı sizin kontrolünüzde</span></div>
+        <div><strong>Privacy-first</strong><span>Gizlilik odaklı mimari</span></div>
+        <div><strong>Kurumsal mail</strong><span>Hesap ve giriş yönetimi</span></div>
+      {% elif project.slug == "jircode-chat" %}
+        <div><strong>Kanallar & DM</strong><span>Ekip iletişimi tek yerde</span></div>
+        <div><strong>Dosya & arama</strong><span>WebRTC ve medya paylaşımı</span></div>
+        <div><strong>Kendi sunucunuz</strong><span>On-premise / private cloud</span></div>
+      {% elif project.slug == "acik-masa" %}
+        <div><strong>QR menü</strong><span>Misafir tarar, menü açılır</span></div>
+        <div><strong>Özel subdomain</strong><span>Anında canlı yayın</span></div>
+        <div><strong>Görsel + kalori</strong><span>Alerjen ve detay popup</span></div>
+      {% endif %}
+    </div>
+
+    <div class="detail-body">
+      {{ project.description|linebreaks }}
+    </div>
+  </div>
+</article>
+
+{% if related %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <h2>Diğer ürünler</h2>
+    </div>
+    <div class="project-grid">
+      {% for project in related %}
+        {% include "partials/project_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
