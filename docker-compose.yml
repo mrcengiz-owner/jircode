@@ -1,15 +1,16 @@
-# JîrCode — Dokploy Compose
-# Domain/Traefik label'larını Dokploy Domains sekmesi ekler.
-# Buraya manuel traefik label KOYMAYIN (çakışma / 404 yapar).
+# JîrCode — Dokploy Docker Compose
+# Domains: Dokploy UI (www.jircode.com + jircode.com → service: web, port: 8000)
+# Manuel Host() label ekleme — Dokploy ekler.
 
 services:
   web:
     build: .
     restart: unless-stopped
-    ports:
+    # Dokploy Traefik docker network üzerinden bağlanır
+    expose:
       - "8000"
     environment:
-      SECRET_KEY: ${SECRET_KEY:-change-me-to-a-long-random-string-at-least-50-chars}
+      SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG:-False}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-jircode.com,www.jircode.com}
       CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-https://jircode.com,https://www.jircode.com}
@@ -27,12 +28,21 @@ services:
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-changeme-please}
     volumes:
       - media_data:/app/media
+    networks:
+      - dokploy-network
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/healthz/"]
       interval: 30s
       timeout: 5s
       retries: 5
-      start_period: 45s
+      start_period: 60s
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
 
 volumes:
   media_data:
+
+networks:
+  dokploy-network:
+    external: true
