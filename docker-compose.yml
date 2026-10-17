@@ -1,16 +1,19 @@
-# JîrCode — Dokploy Docker Compose
-# Domains: Dokploy UI (www.jircode.com + jircode.com → service: web, port: 8000)
-# Manuel Host() label ekleme — Dokploy ekler.
+# JîrCode — Dokploy
+#
+# ÖNEMLİ:
+# 1) Dokploy → Domains sekmesinden jircode.com ve www.jircode.com KAYITLARINI SİL
+#    (Dokploy'un ürettiği ayrık *-web / *-websecure service label'ları 404 yapabiliyor)
+# 2) Bu compose'taki Traefik label'ları kullanılacak
+# 3) Redeploy
 
 services:
   web:
     build: .
     restart: unless-stopped
-    # Dokploy Traefik docker network üzerinden bağlanır
     expose:
       - "8000"
     environment:
-      SECRET_KEY: ${SECRET_KEY}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY required}
       DEBUG: ${DEBUG:-False}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-jircode.com,www.jircode.com}
       CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-https://jircode.com,https://www.jircode.com}
@@ -20,7 +23,7 @@ services:
       SECURE_SSL_REDIRECT: ${SECURE_SSL_REDIRECT:-False}
       SECURE_HSTS_SECONDS: ${SECURE_HSTS_SECONDS:-31536000}
       PORT: "8000"
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL required}
       SEED_PROJECTS: ${SEED_PROJECTS:-True}
       SEED_MENUS: ${SEED_MENUS:-True}
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-admin}
@@ -39,6 +42,22 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=dokploy-network
+
+      # Tek servis — hem apex hem www
+      - traefik.http.services.jircode-web.loadbalancer.server.port=8000
+
+      # HTTPS
+      - traefik.http.routers.jircode-web.rule=Host(`www.jircode.com`) || Host(`jircode.com`)
+      - traefik.http.routers.jircode-web.entrypoints=websecure
+      - traefik.http.routers.jircode-web.tls=true
+      - traefik.http.routers.jircode-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.jircode-web.service=jircode-web
+
+      # HTTP → HTTPS (Dokploy file middleware)
+      - traefik.http.routers.jircode-web-http.rule=Host(`www.jircode.com`) || Host(`jircode.com`)
+      - traefik.http.routers.jircode-web-http.entrypoints=web
+      - traefik.http.routers.jircode-web-http.middlewares=redirect-to-https@file
+      - traefik.http.routers.jircode-web-http.service=jircode-web
 
 volumes:
   media_data:
