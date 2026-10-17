@@ -1,4 +1,6 @@
-# JîrCode — Dokploy Compose (Traefik labels + dokploy-network)
+# JîrCode — Dokploy Compose
+# Domain/Traefik label'larını Dokploy Domains sekmesi ekler.
+# Buraya manuel traefik label KOYMAYIN (çakışma / 404 yapar).
 
 services:
   web:
@@ -25,36 +27,12 @@ services:
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-changeme-please}
     volumes:
       - media_data:/app/media
-    networks:
-      - dokploy-network
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/healthz/"]
       interval: 30s
       timeout: 5s
       retries: 5
       start_period: 45s
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=dokploy-network
-
-      # www + apex
-      - traefik.http.routers.jircode.rule=Host(`www.jircode.com`) || Host(`jircode.com`)
-      - traefik.http.routers.jircode.entrypoints=websecure
-      - traefik.http.routers.jircode.tls=true
-      - traefik.http.routers.jircode.tls.certresolver=letsencrypt
-      - traefik.http.routers.jircode.service=jircode
-      - traefik.http.services.jircode.loadbalancer.server.port=8000
-
-      # HTTP -> HTTPS
-      - traefik.http.routers.jircode-http.rule=Host(`www.jircode.com`) || Host(`jircode.com`)
-      - traefik.http.routers.jircode-http.entrypoints=web
-      - traefik.http.routers.jircode-http.middlewares=jircode-https
-      - traefik.http.middlewares.jircode-https.redirectscheme.scheme=https
-      - traefik.http.middlewares.jircode-https.redirectscheme.permanent=true
 
 volumes:
   media_data:
-
-networks:
-  dokploy-network:
-    external: true
