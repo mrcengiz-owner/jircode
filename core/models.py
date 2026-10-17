@@ -7,8 +7,8 @@ class MenuItem(models.Model):
     LOCATION_HEADER = "header"
     LOCATION_FOOTER = "footer"
     LOCATION_CHOICES = [
-        (LOCATION_HEADER, "Üst menü"),
-        (LOCATION_FOOTER, "Alt menü"),
+        (LOCATION_HEADER, "Üst menü (Header)"),
+        (LOCATION_FOOTER, "Alt menü (Footer)"),
     ]
 
     LINK_INTERNAL = "internal"
@@ -169,3 +169,80 @@ class WaitlistEntry(models.Model):
 
     def __str__(self):
         return self.email
+
+
+class FooterSettings(models.Model):
+    """Tek kayıtlı footer içeriği — admin'den düzenlenir."""
+
+    brand_prefix = models.CharField(
+        "Marka öneki",
+        max_length=40,
+        default="Jîr",
+        help_text="Örn: Jîr",
+    )
+    brand_suffix = models.CharField(
+        "Marka soneki",
+        max_length=40,
+        default="Code",
+        help_text="Yeşil vurgulu kısım. Örn: Code",
+    )
+    description = models.TextField(
+        "Açıklama",
+        default=(
+            "Kurumsal yazılım ürünleri geliştiren bir teknoloji markası. "
+            "Mail, iletişim ve dijital platform çözümleri."
+        ),
+    )
+    links_title = models.CharField(
+        "Linkler sütun başlığı",
+        max_length=80,
+        default="Kurumsal",
+    )
+    contact_title = models.CharField(
+        "İletişim sütun başlığı",
+        max_length=80,
+        default="İletişim",
+    )
+    email = models.EmailField("E-posta", default="hello@jircode.com")
+    location = models.CharField("Konum", max_length=120, default="Türkiye")
+    show_contact_form_link = models.BooleanField(
+        "İletişim formu linkini göster",
+        default=True,
+    )
+    contact_form_label = models.CharField(
+        "İletişim formu yazısı",
+        max_length=80,
+        default="İletişim formu",
+    )
+    copyright_text = models.CharField(
+        "Telif metni",
+        max_length=200,
+        default="JîrCode. Tüm hakları saklıdır.",
+        help_text="Yılın başına otomatik © eklenir.",
+    )
+    bottom_right_text = models.CharField(
+        "Alt sağ metin",
+        max_length=120,
+        default="Software Technologies",
+        blank=True,
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Footer ayarları"
+        verbose_name_plural = "Footer ayarları"
+
+    def __str__(self):
+        return "Footer ayarları"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def load(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj

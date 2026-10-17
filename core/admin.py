@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ContactMessage, MenuItem, Project, WaitlistEntry
+from .models import ContactMessage, FooterSettings, MenuItem, Project, WaitlistEntry
 
 
 @admin.register(MenuItem)
@@ -20,7 +20,16 @@ class MenuItemAdmin(admin.ModelAdmin):
     list_editable = ("is_active", "is_button", "sort_order")
     ordering = ("location", "sort_order", "id")
     fieldsets = (
-        (None, {"fields": ("title", "location", "sort_order", "is_active")}),
+        (
+            None,
+            {
+                "fields": ("title", "location", "sort_order", "is_active"),
+                "description": (
+                    "Üst menü = header. Alt menü = footer linkleri. "
+                    "Footer metinleri için ayrıca «Footer ayarları»nı kullanın."
+                ),
+            },
+        ),
         (
             "Bağlantı",
             {
@@ -35,6 +44,41 @@ class MenuItemAdmin(admin.ModelAdmin):
         ),
         ("Görünüm", {"fields": ("is_button",)}),
     )
+
+
+@admin.register(FooterSettings)
+class FooterSettingsAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (
+            "Marka",
+            {"fields": ("brand_prefix", "brand_suffix", "description")},
+        ),
+        (
+            "Sütun başlıkları",
+            {"fields": ("links_title", "contact_title")},
+        ),
+        (
+            "İletişim",
+            {
+                "fields": (
+                    "email",
+                    "location",
+                    "show_contact_form_link",
+                    "contact_form_label",
+                )
+            },
+        ),
+        (
+            "Alt şerit",
+            {"fields": ("copyright_text", "bottom_right_text")},
+        ),
+    )
+
+    def has_add_permission(self, request):
+        return not FooterSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Project)

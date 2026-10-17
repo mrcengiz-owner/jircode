@@ -1,4 +1,4 @@
-#!/sh
+#!/bin/sh
 set -e
 
 wait_for_db() {
@@ -62,6 +62,8 @@ fi
 if [ "${SEED_MENUS:-True}" = "True" ] || [ "${SEED_MENUS:-true}" = "true" ]; then
   echo "→ Seeding menus..."
   python manage.py seed_menus
+  echo "→ Seeding footer..."
+  python manage.py seed_footer
 fi
 
 if [ -n "${DJANGO_SUPERUSER_USERNAME:-}" ] && [ -n "${DJANGO_SUPERUSER_EMAIL:-}" ] && [ -n "${DJANGO_SUPERUSER_PASSWORD:-}" ]; then

@@ -1,0 +1,39 @@
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="footer-brand">{{ footer.brand_prefix }}<span>{{ footer.brand_suffix }}</span></div>
+      <p>{{ footer.description }}</p>
+    </div>
+    <div>
+      <h3>{{ footer.links_title }}</h3>
+      {% for item in footer_menu %}
+        <a
+          href="{{ item.get_href }}"
+          {% if item.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}
+        >{{ item.title }}</a>
+      {% empty %}
+        <a href="{% url 'about' %}">Hakkımızda</a>
+        <a href="{% url 'services' %}">Hizmetler</a>
+        <a href="{% url 'projects' %}">Ürünler</a>
+      {% endfor %}
+    </div>
+    <div>
+      <h3>{{ footer.contact_title }}</h3>
+      {% if footer.email %}
+        <a href="mailto:{{ footer.email }}">{{ footer.email }}</a>
+      {% endif %}
+      {% if footer.location %}
+        <span>{{ footer.location }}</span>
+      {% endif %}
+      {% if footer.show_contact_form_link %}
+        <a href="{% url 'contact' %}">{{ footer.contact_form_label }}</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© {% now "Y" %} {{ footer.copyright_text }}</span>
+    {% if footer.bottom_right_text %}
+      <span>{{ footer.bottom_right_text }}</span>
+    {% endif %}
+  </div>
+</footer>

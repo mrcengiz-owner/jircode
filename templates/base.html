@@ -56,37 +56,7 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <div class="footer-brand">Jîr<span>Code</span></div>
-        <p>Kurumsal yazılım ürünleri geliştiren bir teknoloji markası. Mail, iletişim ve dijital platform çözümleri.</p>
-      </div>
-      <div>
-        <h3>Kurumsal</h3>
-        {% for item in footer_menu %}
-          <a
-            href="{{ item.get_href }}"
-            {% if item.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}
-          >{{ item.title }}</a>
-        {% empty %}
-          <a href="{% url 'about' %}">Hakkımızda</a>
-          <a href="{% url 'services' %}">Hizmetler</a>
-          <a href="{% url 'projects' %}">Ürünler</a>
-        {% endfor %}
-      </div>
-      <div>
-        <h3>İletişim</h3>
-        <a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a>
-        <span>{{ SITE_LOCATION }}</span>
-        <a href="{% url 'contact' %}">İletişim formu</a>
-      </div>
-    </div>
-    <div class="container footer-bottom">
-      <span>© {% now "Y" %} {{ SITE_NAME }}. Tüm hakları saklıdır.</span>
-      <span>Software Technologies</span>
-    </div>
-  </footer>
+  {% include "partials/footer.html" %}
 
   <script src="{% static 'js/main.js' %}"></script>
   {% block extra_js %}{% endblock %}
