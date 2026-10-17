@@ -19,15 +19,24 @@ DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
 
 ALLOWED_HOSTS = [
     h.strip()
-    for h in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for h in os.environ.get(
+        "ALLOWED_HOSTS",
+        "jircode.com,www.jircode.com,localhost,127.0.0.1",
+    ).split(",")
     if h.strip()
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
-    for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+    for o in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS",
+        "https://jircode.com,https://www.jircode.com",
+    ).split(",")
     if o.strip()
 ]
+
+# Örn: www.jircode.com — apex'i www'ye 301 yönlendirir
+CANONICAL_HOST = os.environ.get("CANONICAL_HOST", "").strip()
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -41,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.middleware.CanonicalHostMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
