@@ -1,6 +1,40 @@
 from django.contrib import admin
 
-from .models import ContactMessage, Project, WaitlistEntry
+from .models import ContactMessage, MenuItem, Project, WaitlistEntry
+
+
+@admin.register(MenuItem)
+class MenuItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "location",
+        "link_type",
+        "url_name",
+        "custom_url",
+        "is_button",
+        "is_active",
+        "sort_order",
+    )
+    list_filter = ("location", "link_type", "is_active", "is_button")
+    search_fields = ("title", "custom_url", "url_name")
+    list_editable = ("is_active", "is_button", "sort_order")
+    ordering = ("location", "sort_order", "id")
+    fieldsets = (
+        (None, {"fields": ("title", "location", "sort_order", "is_active")}),
+        (
+            "Bağlantı",
+            {
+                "fields": (
+                    "link_type",
+                    "url_name",
+                    "custom_url",
+                    "open_in_new_tab",
+                    "match_names",
+                )
+            },
+        ),
+        ("Görünüm", {"fields": ("is_button",)}),
+    )
 
 
 @admin.register(Project)

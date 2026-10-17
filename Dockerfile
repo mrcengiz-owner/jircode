@@ -19,14 +19,18 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
+ENV SECRET_KEY=build-only-not-for-production \
+    DEBUG=False \
+    ALLOWED_HOSTS=*
+
 RUN chmod +x /app/entrypoint.sh \
     && mkdir -p /app/media /app/staticfiles \
     && python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD curl -fsS "http://127.0.0.1:${PORT}/healthz/" || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+  CMD curl -fsS "http://127.0.0.1:${PORT:-8000}/healthz/" || exit 1
 
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "60"]
+CMD ["sh", "-c", "gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3 --timeout 60"]

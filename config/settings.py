@@ -70,6 +70,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# PostgreSQL: DATABASE_URL=postgres://user:pass@host:5432/dbname
+# Yerel varsayılan: SQLite
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
@@ -77,6 +79,11 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
+
+# Postgres SSL (managed DB) için: DATABASE_SSL_REQUIRE=True
+if os.environ.get("DATABASE_SSL_REQUIRE", "False").lower() in ("1", "true", "yes"):
+    DATABASES["default"].setdefault("OPTIONS", {})
+    DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -117,6 +124,12 @@ if not DEBUG:
         "true",
         "yes",
     )
+    # Dokploy/Traefik HTTPS terminate eder; HSTS proxy arkasında güvenli.
+    SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "31536000"))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "same-origin"
 
 SITE_NAME = "JîrCode"
 SITE_TAGLINE = "Software Technologies"

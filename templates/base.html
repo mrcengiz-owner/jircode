@@ -26,11 +26,20 @@
         <span></span><span></span>
       </button>
       <nav class="site-nav" data-nav>
-        <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>Ana Sayfa</a>
-        <a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>Hakkımızda</a>
-        <a href="{% url 'services' %}" {% if request.resolver_match.url_name == 'services' %}aria-current="page"{% endif %}>Hizmetler</a>
-        <a href="{% url 'projects' %}" {% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project_detail' %}aria-current="page"{% endif %}>Ürünler</a>
-        <a class="nav-cta" href="{% url 'contact' %}">İletişim</a>
+        {% for item in header_menu %}
+          <a
+            href="{{ item.get_href }}"
+            class="{% if item.is_button %}nav-cta{% endif %}"
+            {% if item.is_current_page %}aria-current="page"{% endif %}
+            {% if item.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}
+          >{{ item.title }}</a>
+        {% empty %}
+          <a href="{% url 'home' %}" {% if current_url_name == 'home' %}aria-current="page"{% endif %}>Ana Sayfa</a>
+          <a href="{% url 'about' %}" {% if current_url_name == 'about' %}aria-current="page"{% endif %}>Hakkımızda</a>
+          <a href="{% url 'services' %}" {% if current_url_name == 'services' %}aria-current="page"{% endif %}>Hizmetler</a>
+          <a href="{% url 'projects' %}" {% if current_url_name == 'projects' or current_url_name == 'project_detail' %}aria-current="page"{% endif %}>Ürünler</a>
+          <a class="nav-cta" href="{% url 'contact' %}">İletişim</a>
+        {% endfor %}
       </nav>
     </div>
   </header>
@@ -55,9 +64,16 @@
       </div>
       <div>
         <h3>Kurumsal</h3>
-        <a href="{% url 'about' %}">Hakkımızda</a>
-        <a href="{% url 'services' %}">Hizmetler</a>
-        <a href="{% url 'projects' %}">Ürünler</a>
+        {% for item in footer_menu %}
+          <a
+            href="{{ item.get_href }}"
+            {% if item.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}
+          >{{ item.title }}</a>
+        {% empty %}
+          <a href="{% url 'about' %}">Hakkımızda</a>
+          <a href="{% url 'services' %}">Hizmetler</a>
+          <a href="{% url 'projects' %}">Ürünler</a>
+        {% endfor %}
       </div>
       <div>
         <h3>İletişim</h3>
