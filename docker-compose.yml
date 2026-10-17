@@ -1,12 +1,13 @@
 # JîrCode — Dokploy Compose
-# Postgres: Dokploy managed DB (DATABASE_URL)
+# Apex + www Traefik üzerinden birlikte çalışır.
 
 services:
   web:
     build: .
     restart: unless-stopped
-    ports:
-      - "${PORT:-8000}:8000"
+    # Dokploy/Traefik için host publish gerekmez; sadece container port
+    expose:
+      - "8000"
     environment:
       SECRET_KEY: ${SECRET_KEY:-change-me-to-a-long-random-string-at-least-50-chars}
       DEBUG: ${DEBUG:-False}
@@ -18,10 +19,7 @@ services:
       SECURE_SSL_REDIRECT: ${SECURE_SSL_REDIRECT:-False}
       SECURE_HSTS_SECONDS: ${SECURE_HSTS_SECONDS:-31536000}
       PORT: "8000"
-
-      # Dokploy Postgres internal URL
       DATABASE_URL: ${DATABASE_URL}
-
       SEED_PROJECTS: ${SEED_PROJECTS:-True}
       SEED_MENUS: ${SEED_MENUS:-True}
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-admin}
@@ -29,12 +27,35 @@ services:
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-changeme-please}
     volumes:
       - media_data:/app/media
+    networks:
+      - dokploy-network
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/healthz/"]
       interval: 30s
       timeout: 5s
       retries: 5
       start_period: 45s
+    labels:
+      - traefik.enable=true
+
+      # HTTPS — hem apex hem www
+      - traefik.http.routers.jircode-web.rule=Host(`jircode.com`) || Host(`www.jircode.com`)
+      - traefik.http.routers.jircode-web.entrypoints=websecure
+      - traefik.http.routers.jircode-web.tls=true
+      - traefik.http.routers.jircode-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.jircode-web.service=jircode-web
+      - traefik.http.services.jircode-web.loadbalancer.server.port=8000
+
+      # HTTP → HTTPS
+      - traefik.http.routers.jircode-web-http.rule=Host(`jircode.com`) || Host(`www.jircode.com`)
+      - traefik.http.routers.jircode-web-http.entrypoints=web
+      - traefik.http.routers.jircode-web-http.middlewares=jircode-https-redirect
+      - traefik.http.middlewares.jircode-https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.jircode-https-redirect.redirectscheme.permanent=true
 
 volumes:
   media_data:
+
+networks:
+  dokploy-network:
+    external: true
