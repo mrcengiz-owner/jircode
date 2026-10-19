@@ -33,7 +33,8 @@ EXPOSE 8000
 
 # Dokploy Application: tek CMD — ENTRYPOINT yok (Dokploy override bozmasın)
 # Panelde Port = 8000, Domain Port = 8000
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
-  CMD curl -fsS "http://127.0.0.1:${PORT:-8000}/healthz/" || exit 1
+# Host header zorunlu (DisallowedHost 400 → unhealthy → Traefik 502)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=5 \
+  CMD curl -fsS -H "Host: localhost" "http://127.0.0.1:${PORT:-8000}/healthz/" || exit 1
 
 CMD ["/bin/sh", "/app/start.sh"]

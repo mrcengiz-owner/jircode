@@ -25,6 +25,10 @@ ALLOWED_HOSTS = [
     ).split(",")
     if h.strip()
 ]
+# Docker HEALTHCHECK / curl Host: 127.0.0.1 — env'de olmasa da gerekli
+for _h in ("127.0.0.1", "localhost"):
+    if _h not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_h)
 
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
