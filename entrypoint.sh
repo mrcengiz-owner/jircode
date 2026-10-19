@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+echo "→ Entrypoint start (PORT=${PORT:-8000})"
+
 wait_for_db() {
   python <<'PY'
 import os
@@ -9,6 +11,7 @@ import time
 
 url = os.environ.get("DATABASE_URL", "")
 if not url or url.startswith("sqlite"):
+    print("→ No Postgres DATABASE_URL; skipping wait")
     sys.exit(0)
 
 import dj_database_url
@@ -27,6 +30,7 @@ user = cfg.get("USER")
 password = cfg.get("PASSWORD")
 
 print(f"→ Waiting for PostgreSQL at {host}:{port}/{name} ...")
+print(f"→ DB user={user!r} name={name!r}")
 for attempt in range(1, 61):
     try:
         with psycopg.connect(
@@ -51,19 +55,27 @@ PY
 
 wait_for_db
 
-echo "→ Running migrations..."
+echo "→ makemigrations..."
+python manage.py makemigrations --noinput || {
+  echo "⚠ makemigrations uyarı/hata verdi, migrate ile devam"
+}
+
+echo "→ migrate..."
 python manage.py migrate --noinput
+
+echo "→ collectstatic..."
+python manage.py collectstatic --noinput || true
 
 if [ "${SEED_PROJECTS:-False}" = "True" ] || [ "${SEED_PROJECTS:-false}" = "true" ]; then
   echo "→ Seeding products..."
-  python manage.py seed_projects
+  python manage.py seed_projects || true
 fi
 
 if [ "${SEED_MENUS:-True}" = "True" ] || [ "${SEED_MENUS:-true}" = "true" ]; then
   echo "→ Seeding menus..."
-  python manage.py seed_menus
+  python manage.py seed_menus || true
   echo "→ Seeding footer..."
-  python manage.py seed_footer
+  python manage.py seed_footer || true
 fi
 
 if [ -n "${DJANGO_SUPERUSER_USERNAME:-}" ] && [ -n "${DJANGO_SUPERUSER_EMAIL:-}" ] && [ -n "${DJANGO_SUPERUSER_PASSWORD:-}" ]; then
@@ -84,6 +96,9 @@ user.save()
 print("created" if created else "updated", username)
 PY
 fi
+
+echo "→ Django check..."
+python manage.py check || true
 
 echo "→ Starting: $*"
 exec "$@"

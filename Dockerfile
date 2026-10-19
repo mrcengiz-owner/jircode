@@ -33,5 +33,6 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=45s --retries=3 \
   CMD curl -fsS "http://127.0.0.1:${PORT:-8000}/healthz/" || exit 1
 
+# Dokploy Application: Port = 8000 (Domains de aynı port)
 ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
-CMD ["sh", "-c", "gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3 --timeout 60"]
+CMD ["sh", "-c", "echo \"→ Gunicorn on 0.0.0.0:${PORT:-8000}\" && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3 --threads 2 --timeout 120 --access-logfile - --error-logfile -"]
