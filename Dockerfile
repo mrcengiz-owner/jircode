@@ -19,20 +19,21 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
+# Build-time collectstatic (SECRET_KEY sadece build için)
 ENV SECRET_KEY=build-only-not-for-production \
     DEBUG=False \
     ALLOWED_HOSTS=*
 
-RUN sed -i 's/\r$//' /app/entrypoint.sh \
-    && chmod +x /app/entrypoint.sh \
+RUN sed -i 's/\r$//' /app/start.sh /app/entrypoint.sh \
+    && chmod +x /app/start.sh /app/entrypoint.sh \
     && mkdir -p /app/media /app/staticfiles \
     && python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=45s --retries=3 \
+# Dokploy Application: tek CMD — ENTRYPOINT yok (Dokploy override bozmasın)
+# Panelde Port = 8000, Domain Port = 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
   CMD curl -fsS "http://127.0.0.1:${PORT:-8000}/healthz/" || exit 1
 
-# Dokploy Application: Port = 8000 (Domains de aynı port)
-ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
-CMD ["sh", "-c", "echo \"→ Gunicorn on 0.0.0.0:${PORT:-8000}\" && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3 --threads 2 --timeout 120 --access-logfile - --error-logfile -"]
+CMD ["/bin/sh", "/app/start.sh"]
