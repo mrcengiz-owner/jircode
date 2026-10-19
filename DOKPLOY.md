@@ -1,30 +1,21 @@
-# Dokploy 404 düzeltmesi
+# Dokploy — Application (Dockerfile)
 
-## Kritik adım (Preview’daki label çakışması)
+Compose kullanma. Uygulama tipi: **Application**.
 
-Dokploy Domains’in ürettiği label’lar her domain için **ayrı Traefik service** açıyor
-(`...-8-websecure`, `...-9-websecure`). Bu yapıda origin sıkça `404 page not found` döner.
+## Kurulum
 
-### Yapılacaklar
+1. **Application** oluştur → Provider: **Dockerfile**
+2. Dockerfile: `Dockerfile` (kök dizin)
+3. Port: **8000**
+4. Environment variables: aşağıdaki env bloğunu yapıştır
+5. Domains:
+   - `www.jircode.com` → port `8000` → HTTPS
+   - `jircode.com` → port `8000` → HTTPS
+6. Volume (opsiyonel): `/app/media`
+7. Deploy
 
-1. Dokploy uygulama → **Domains**
-2. `jircode.com` ve `www.jircode.com` domain kayıtlarını **SİL**
-3. Bu repo’daki `docker-compose.yml` push edilmiş olsun
-4. **Redeploy**
-5. Preview Compose’ta sadece şunlar görünsün:
-   - `traefik.http.services.jircode-web.loadbalancer.server.port=8000`
-   - `Host(\`www.jircode.com\`) || Host(\`jircode.com\`)`
-   - `...-8-websecure` / `...-9-websecure` **olmasın**
-6. Logs: `Listening at: http://0.0.0.0:8000`
+## Notlar
 
-## Env
-
-```env
-DATABASE_URL=postgresql://mrcengiz:Murat1993%2E@postgres-postgres-tjksoo:5432/jircode
-```
-
-(Şifredeki `.` → `%2E`)
-
-## Cloudflare
-
-DNS doğru. Apex→www redirect ayrı konu; 404 Traefik route kaynaklı.
+- Postgres host: `postgres-postgres-tjksoo` (Dokploy internal)
+- Şifredeki `.` URL'de `%2E` olmalı
+- Cloudflare apex→www redirect ayrıca kalabilir
